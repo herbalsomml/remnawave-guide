@@ -167,6 +167,7 @@ systemctl restart nginx
 ## Установка ноды
 ```
 mkdir -p /opt/remnanode/
+cd /opt/remnanode/
 ```
 ```
 nano .env
@@ -202,7 +203,6 @@ curl -fsSL https://get.docker.com -o get-docker.sh
 sh get-docker.sh
 ```
 ```
-cd /opt/remnanode/
 docker compose up
 ```
 
