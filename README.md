@@ -185,6 +185,10 @@ NODE_PORT=2222
 SECRET_KEY=<СЕКРЕТ ИЗ REMNAWAVE>
 ```
 ```
+wget -O /opt/remnanode/geoip.dat https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat
+wget -O /opt/remnanode/geosite.dat https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat
+```
+```
 nano docker-compose.yml
 ```
 ```yml
@@ -197,6 +201,8 @@ services:
     restart: always
     volumes:
       - /dev/shm:/dev/shm
+      - ./geoip.dat:/opt/remnanode/geopip.dat
+      - ./geosite.dat:/opt/remnanode/geosite.dat
     env_file:
       - .env
 ```
@@ -207,6 +213,184 @@ sh get-docker.sh
 ```
 cd /opt/remnanode/
 docker compose up
+```
+
+## Профиль remnawave
+```json
+{
+  "log": {
+    "loglevel": "info"
+  },
+  "dns": {
+    "servers": [
+      {
+        "address": "94.140.14.14",
+        "domains": [
+          "geosite:geolocation-!cn"
+        ]
+      },
+      {
+        "address": "94.140.15.15",
+        "domains": [
+          "geosite:geolocation-!cn"
+        ]
+      }
+    ]
+  },
+  "inbounds": [
+    {
+      "tag": "ITALY_MILAN_TCP",
+      "port": 44443,
+      "listen": "0.0.0.0",
+      "protocol": "vless",
+      "settings": {
+        "clients": [],
+        "decryption": "none"
+      },
+      "sniffing": {
+        "enabled": true,
+        "routeOnly": false,
+        "destOverride": [
+          "http",
+          "tls",
+          "quic",
+          "fakedns"
+        ],
+        "metadataOnly": false
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "tcpSettings": {
+          "header": {
+            "type": "none"
+          },
+          "acceptProxyProtocol": false
+        },
+        "realitySettings": {
+          "dest": "9443",
+          "show": false,
+          "xver": 0,
+          "spiderX": "/",
+          "shortIds": [
+            ""
+          ],
+          "publicKey": "<ПУБЛИЧНЫЙ КЛЮЧ>",
+          "privateKey": "<ПРИВАТНЫЙ КЛЮЧ>",
+          "serverNames": [
+            "<ДОМЕН>"
+          ]
+        }
+      }
+    },
+    {
+      "tag": "ITALY_MILAN_GRPC",
+      "port": 44444,
+      "listen": "0.0.0.0",
+      "protocol": "vless",
+      "settings": {
+        "clients": [],
+        "decryption": "none"
+      },
+      "sniffing": {
+        "enabled": true,
+        "routeOnly": false,
+        "destOverride": [
+          "http",
+          "tls",
+          "quic",
+          "fakedns"
+        ],
+        "metadataOnly": false
+      },
+      "streamSettings": {
+        "network": "grpc",
+        "security": "reality",
+        "tcpSettings": {
+          "header": {
+            "type": "none"
+          },
+          "acceptProxyProtocol": false
+        },
+        "realitySettings": {
+          "dest": "9443",
+          "show": false,
+          "xver": 0,
+          "spiderX": "/",
+          "shortIds": [
+            ""
+          ],
+          "publicKey": "<ПУБЛИЧНЫЙ КЛЮЧ>",
+          "privateKey": "<ПРИВАТНЫЙ КЛЮЧ>",
+          "serverNames": [
+            "<ДОМЕН>"
+          ]
+        }
+      }
+    },
+    {
+      "tag": "ITALY_MILAN_XHTTP",
+      "listen": "/dev/shm/xrxh.socket,0666",
+      "protocol": "vless",
+      "settings": {
+        "clients": [],
+        "fallbacks": [],
+        "decryption": "none"
+      },
+      "sniffing": {
+        "enabled": true,
+        "destOverride": [
+          "http",
+          "tls",
+          "quic"
+        ]
+      },
+      "streamSettings": {
+        "network": "xhttp",
+        "xhttpSettings": {
+          "mode": "auto",
+          "path": "/xhttppath/",
+          "extra": {
+            "noSSEHeader": true,
+            "xPaddingBytes": "100-1000",
+            "scMaxBufferedPosts": 30,
+            "scMaxEachPostBytes": 1000000,
+            "scStreamUpServerSecs": "20-80"
+          }
+        }
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "tag": "DIRECT",
+      "protocol": "freedom"
+    },
+    {
+      "tag": "BLOCK",
+      "protocol": "blackhole"
+    }
+  ],
+  "routing": {
+    "rules": [
+      {
+        "ip": [
+          "ext:geoip.dat:ru"
+        ],
+        "type": "field",
+        "outboundTag": "DIRECT"
+      },
+      {
+        "type": "field",
+        "protocol": [
+          "bittorrent"
+        ],
+        "outboundTag": "BLOCK"
+      }
+    ],
+    "domainStrategy": "IPIfNonMatch"
+  }
+}
 ```
 
 ## Настройки TCP хоста
