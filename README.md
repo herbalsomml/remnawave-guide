@@ -154,15 +154,6 @@ server {
     http2 on;
     server_name <ДОМЕН>;
 
-    location /grpc/ {
-        grpc_pass grpc://127.0.0.1:8080;
-        grpc_set_header Host $host;
-        grpc_set_header X-Real-IP $remote_addr;
-        grpc_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        grpc_read_timeout 1h;
-        grpc_send_timeout 1h;
-    }
-
     location / {
         return 301 https://$host$request_uri;
     }
